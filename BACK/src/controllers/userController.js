@@ -1,19 +1,42 @@
 import User from "../models/user.js";
 
+export const verificarRol = (roles) => {
+    return (req, res, next) => {
+        req.user = {
+            id: 1,
+            email: "admin@gmail.com",
+            rol: "admin"
+        };
+
+        if(!roles.includes(req.user.rol)) {
+            return res.status(403).json({ message: "No tienes permisos para realizar esta accion" });
+        }
+
+        next();
+    };
+};
+
 const loginUsuario = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const result = await User.login(email, password);
+        const { user, permisos } = await User.login(email, password);
         res.status(200).json({
             message: "login exitoso",
-            user: result.user,
-            token: result.token
+            user: {
+                id: user.id,
+                nombre: user.nombre,
+                email: user.email,
+                rol: user.rol_id,
+                permisos
+            },
         });
     } catch(err) {
         res.status(400).send(err);
     }
 };
+
+
 
 const obtenerUsuarios = async (req, res) => {
 
@@ -26,10 +49,10 @@ const obtenerUsuarios = async (req, res) => {
 };
 
 const crearUsuario = async (req, res) => {
-    const { nombre, email, password } = req.body;
+    const { nombre, email, password, rol_id } = req.body;
 
     try {
-        const result = await User.crearUsuarios(nombre, email, password);
+        const result = await User.crearUsuarios(nombre, email, password, rol_id);
         res.status(200).send("Usuario creado exitosamente");
     } catch(err) {
         res.status(500).send("Error al crear al usuario");
