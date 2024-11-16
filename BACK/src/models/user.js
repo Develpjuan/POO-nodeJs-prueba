@@ -70,7 +70,7 @@ class user {
         return new Promise((resolve, reject) => {
             connection.query(query, [nombre, email, hashedPassword, rol_id], (err, result) => {
                 if(err) {
-                    return reject(err);
+                    return reject(result);
                 }
                 resolve(result);
             });
