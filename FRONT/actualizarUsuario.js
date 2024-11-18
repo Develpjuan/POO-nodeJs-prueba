@@ -23,7 +23,7 @@ btnActualizar.addEventListener("click", () => {
         email: document.getElementById("email").value
     }
 
-    fetch(`http://localhost:3000/api/actualizar/${userId}`, {
+    fetch(`http://localhost:3000/api/user/${userId}`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
