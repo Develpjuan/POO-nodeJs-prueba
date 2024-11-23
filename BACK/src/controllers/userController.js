@@ -2,11 +2,6 @@ import User from "../models/user.js";
 
 export const verificarRol = (roles) => {
     return (req, res, next) => {
-        req.user = {
-            id: 1,
-            email: "admin@gmail.com",
-            rol: "admin"
-        };
 
         if(!roles.includes(req.user.rol)) {
             return res.status(403).json({ message: "No tienes permisos para realizar esta accion" });
@@ -21,6 +16,13 @@ const loginUsuario = async (req, res) => {
 
     try {
         const { user, permisos } = await User.login(email, password);
+        req.user = {
+            id: user.id,
+            email: user.email,
+            rol: user.rol,
+            permisos: permisos
+        };
+
         res.status(200).json({
             message: "login exitoso",
             user: {
@@ -32,7 +34,8 @@ const loginUsuario = async (req, res) => {
             },
         });
     } catch(err) {
-        res.status(400).send(err);
+        console.error("Error en el login:", err);
+        res.status(400).json(({ message: err || "Error al intentar iniciar sesion" }))
     }
 };
 
